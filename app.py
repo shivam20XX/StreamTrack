@@ -1,9 +1,8 @@
 import streamlit as st
-from tmdb.api import get_trending_movies,get_discover_titles, get_trending_shows, get_movie_cast, get_movie_details, get_popular_titles, get_upcoming_titles
+from tmdb.api import get_trending_movies, get_discover_titles, get_trending_shows, get_movie_cast, get_movie_details, get_popular_titles, get_upcoming_titles
 import time
 
 # st.cache_data.clear()
-
 
 
 st.set_page_config(
@@ -13,7 +12,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-#------this will check titles their id and their type before going on details page--
+# ------this will check titles their id and their type before going on details page--
 
 query_params = st.query_params
 
@@ -23,7 +22,7 @@ if "id" in query_params:
         "type": query_params["type"]
     }
     st.switch_page("pages/Titles_Details.py")
-        
+
 st.markdown("""
 <style>
 @media (max-width: 768px) {
@@ -35,53 +34,52 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 
 
 # ------------------------------------------------------------------------------------------------------
 # ? Get trending movies
 movies = get_trending_movies()
 
-# This changes the featured movies in every 2 hour to limit the api call 
-bucket = int(time.time() // 7200)  # 7200 = 2 hours
-index = bucket % len(movies)
+# This changes the featured movies in every 2 hour to limit the api call
+if movies:
+    bucket = int(time.time() // 7200)  # 7200 = 2 hours
+    index = bucket % len(movies)
 
-# ? this will find random movies from trending charts on tmdb api
-featured = movies[index]
+    # ? this will find random movies from trending charts on tmdb api
+    featured = movies[index]
 
+    # --------------------------- Get details for current movie--------------------------------------------
+    details = get_movie_details(featured['id'])
+    cast = get_movie_cast(featured['id'])
+    # ? this combines two dictionaries - here in case featured content and their details
+    featured = {**featured, **details}
 
-# --------------------------- Get details for current movie--------------------------------------------
+    # -------------------------- for getting logo ---------------------------------------------------------
+    if details.get("logo"):
+        logo_url = f"https://image.tmdb.org/t/p/original{details['logo']}"
+        title_content = f'<img src="{logo_url}" style="max-height:100px;">'
+    else:
+        title_content = f'<div style="margin:0; font-size:3rem; font-weight:bold; color:white;">{details["title"]}</div>'
 
-details = get_movie_details(featured['id'])
-cast = get_movie_cast(featured['id'])
-# ? this combines two dictionaries - here in case featured content and their details
-featured = {**featured, **details}
+    # ------------------------------ Backdrop image -------------------------------
+    if featured.get('backdrop'):
+        backdrop_url = f"https://image.tmdb.org/t/p/w1920{featured['backdrop']}"
 
-# -------------------------- for getting logo ---------------------------------------------------------
-
-if details.get("logo"):
-    logo_url = f"https://image.tmdb.org/t/p/original{details['logo']}"
-    title_content = f'<img src="{logo_url}" style="max-height:100px;">'
-else:
-    title_content = f'<div style="margin:0; font-size:3rem; font-weight:bold; color:white;">{details["title"]}</div>'
-
-
-# ------------------------------ Backdrop image -------------------------------
-if featured.get('backdrop'):
-    backdrop_url = f"https://image.tmdb.org/t/p/w1920{featured['backdrop']}"
-
-    html_content = f"""
-    <div style="position: relative; width: 100%; height:520px; overflow: hidden; border-radius: 20px;">
-        <img src="{backdrop_url}" style="width: 100%; height: 100%; object-fit:cover;">
-        <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 150px; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);"></div>
-        <div style="position: absolute; bottom: 80px; left: 40px;">
-            <div style="margin: 0; text-shadow: 3px 3px 6px rgba(0,0,0,0.9);">{title_content}</div>
+        html_content = f"""
+        <div style="position: relative; width: 100%; height:520px; overflow: hidden; border-radius: 20px;">
+            <img src="{backdrop_url}" style="width: 100%; height: 100%; object-fit:cover;">
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 150px; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);"></div>
+            <div style="position: absolute; bottom: 80px; left: 40px;">
+                <div style="margin: 0; text-shadow: 3px 3px 6px rgba(0,0,0,0.9);">{title_content}</div>
+            </div>
         </div>
-    </div>
-    """
-    st.markdown(html_content, unsafe_allow_html=True)
+        """
+        st.markdown(html_content, unsafe_allow_html=True)
+    else:
+        st.warning("Backdrop image not available")
 else:
-    st.warning("Backdrop image not available")
+    st.info("Featured content is temporarily unavailable. Please check TMDB API configuration and try again.")
 
 
 # st.button("Add to library") # todo have to make the library functionality
@@ -173,7 +171,7 @@ for i, show in enumerate(trending_shows[:8]):
                  style="width:100%; border-radius:14px;">
         </a>
         """, unsafe_allow_html=True)
-        
+
         st.markdown(f"**{show['title']}**")
         st.caption(f"⭐ {show['rating']}/10")
 
@@ -192,7 +190,7 @@ for i, item in enumerate(popular_titles[:8]):
     with cols[i]:
         if item["poster"]:
             poster_url = f"https://image.tmdb.org/t/p/w500{item['poster']}"
-        
+
         st.markdown(f"""
 <a href="?id={item['id']}&type={item['type']}" target="_self">
     <img src="{poster_url}" style="width:100%; border-radius:14px;">
@@ -225,7 +223,7 @@ items_per_page = 8
 total_items = len(upcoming_titles)
 
 # Controls Row
-left_col, mid_col, right_col = st.columns([1,8,1])
+left_col, mid_col, right_col = st.columns([1, 8, 1])
 
 with left_col:
     if st.button("<-", key="upcoming_left"):
