@@ -1,5 +1,5 @@
 import streamlit as st
-from tmdb.api import get_trending_movies, get_discover_titles, get_trending_shows, get_movie_cast, get_movie_details, get_popular_titles, get_upcoming_titles
+from tmdb.api import get_trending_movies, get_trending_shows, get_movie_cast, get_movie_details, get_popular_titles, get_upcoming_titles
 import time
 
 # st.cache_data.clear()
