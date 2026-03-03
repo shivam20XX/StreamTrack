@@ -22,7 +22,7 @@ StreamTrack is a personal media tracking application that helps you organize, ra
 1. Clone the repository
 2. Install dependencies: `pip install -r requirements.txt`
 3. Get a TMDB API key from [themoviedb.org](https://www.themoviedb.org/settings/api)
-4. Add your API key to the configuration
+4. Add your API key to the configuration ( in .env file )
 5. Run the app: `streamlit run app.py`
 
 ## Usage
