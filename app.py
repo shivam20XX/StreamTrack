@@ -26,7 +26,7 @@ st.markdown("""
 <style>
 @media (max-width: 768px) {
     img {
-        height: 200px !important;
+        height: 200px important;
     }
 }
 </style>
