@@ -9,7 +9,6 @@ st.set_page_config(
     page_title="StreamTrack",
     page_icon="🎬",
     layout="wide",
-    initial_sidebar_state="collapsed"
 )
 
 # ------this will check titles their id and their type before going on details page--
