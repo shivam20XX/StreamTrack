@@ -21,7 +21,7 @@ if "id" in query_params:
         "id": int(query_params["id"]),
         "type": query_params["type"]
     }
-    st.switch_page("pages/Titles_Details.py")
+    st.switch_page("Pages/Titles_Details.py")
 
 st.markdown("""
 <style>
