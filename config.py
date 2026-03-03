@@ -1,7 +1,7 @@
+import streamlit as st
+from dotenv import load_dotenv
 import os
 print("Running from:", os.getcwd())
-from dotenv import load_dotenv
-import streamlit as st
 
 load_dotenv()
 
