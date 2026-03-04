@@ -17,34 +17,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-st.markdown("""
-<style>
-
-@media (max-width:768px){
-
-.scroll-row{
-display:flex;
-overflow-x:auto;
-gap:14px;
-padding-bottom:10px;
-}
-
-.scroll-row > div{
-min-width:140px;
-flex-shrink:0;
-}
-
-.scroll-row::-webkit-scrollbar{
-display:none;
-}
-
-}
-
-</style>
-""", unsafe_allow_html=True)
-
-
-
 
 # ------this will check titles their id and their type before going on details page--
 
@@ -154,17 +126,16 @@ st.markdown("""
 trending_movies = get_trending_movies()
 
 # ?------------------ gets few trending movies of the week from tmdb api----------------------
-st.markdown('<div class="scroll-row">', unsafe_allow_html=True)
-movie_cols = st.columns(8)
+movie_cols = st.columns(7)
 
 
-for i, movie in enumerate(trending_movies[:8]):
+for i, movie in enumerate(trending_movies[:7]):
     with movie_cols[i]:
         if movie['poster']:
             poster_url = f"https://image.tmdb.org/t/p/w500{movie['poster']}"
 
             st.markdown(f"""
-        <a href="?id={movie['id']}&type=movie" target="_self" style="text-decoration:none;">
+        <a href="?id={movie['id']}&title={movie['title']}&type=movie" target="_self" style="text-decoration:none;">
             <div style="position:relative;">
                 <img src="{poster_url}" style="width:100%; border-radius:14px;">
                 <div style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.8); color:#FFD700; padding:4px 8px; border-radius:8px; font-size:13px; font-weight:300;">
@@ -175,7 +146,6 @@ for i, movie in enumerate(trending_movies[:8]):
         """, unsafe_allow_html=True)
 
             st.markdown(f"**{movie['title']}**")
-st.markdown('</div>', unsafe_allow_html=True)
 
 # ? -------------------------------- this gets trending tv shows ----------------------------------
 
@@ -194,9 +164,9 @@ st.markdown("""
 
 trending_shows = get_trending_shows()
 
-show_cols = st.columns(8)
+show_cols = st.columns(7)
 
-for i, show in enumerate(trending_shows[:8]):
+for i, show in enumerate(trending_shows[:7]):
     with show_cols[i]:
         if show['poster']:
             poster_url = f"https://image.tmdb.org/t/p/w500{show['poster']}"
@@ -232,9 +202,9 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-cols = st.columns(8)
+cols = st.columns(7)
 
-for i, item in enumerate(popular_titles[:8]):
+for i, item in enumerate(popular_titles[:7]):
     with cols[i]:
         if item["poster"]:
             poster_url = f"https://image.tmdb.org/t/p/w500{item['poster']}"
@@ -289,11 +259,11 @@ upcoming_titles = get_upcoming_titles()
 if "upcoming_index" not in st.session_state:
     st.session_state.upcoming_index = 0
 
-items_per_page = 8
+items_per_page = 7
 total_items = len(upcoming_titles)
 
 # Controls Row
-left_col, mid_col, right_col = st.columns([1, 8, 1])
+left_col, mid_col, right_col = st.columns([1, 7, 1])
 
 with left_col:
     if st.button("<-", key="upcoming_left"):

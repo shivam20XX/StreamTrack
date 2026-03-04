@@ -77,7 +77,7 @@ if media_type == "tv":
     seasons = details.get("number_of_seasons")
 else:
     seasons = None
-
+    
 runtime = details.get("runtime", "N/A")
 genres = " • ".join(details.get("genres", []))
 rating = details.get("rating", "N/A")
@@ -89,16 +89,6 @@ seasons = details.get("seasons")
 episodes = details.get("episodes")
 runtime = details.get("runtime")
 
-if media_type == "tv":
-    season_text = f"{seasons} Season" if seasons == 1 else f"{seasons} Seasons" if seasons else ""
-    episode_text = f"{episodes} Episodes" if episodes else ""
-    info_parts = [year, season_text, episode_text, status]
-    info_line = " • ".join(part for part in info_parts if part)
-
-else:
-    info_parts = [year, f"{runtime} min" if runtime else "", status]
-    info_line = " • ".join(part for part in info_parts if part)
-
 # ? --- Layout -----------------------------
 
 col1, col2 = st.columns([1, 2])
@@ -109,15 +99,28 @@ with col1:
 
 with col2:
     st.title(details["title"])
+    
+    if media_type == "tv":
+        total_seasons = details.get("number_of_seasons")
+        total_episodes = details.get("number_of_episodes")
+        air_date = details.get("release_date")
+        year = air_date[:4] if air_date else "TBA"
+        
+        st.markdown(
+            f"{year} • {total_seasons} Seasons • {total_episodes} Episodes"
+        )
+    else:
+        info_parts = [year, f"{runtime} min" if runtime else "", status]
+        info_line = " • ".join(part for part in info_parts if part)
 
-    st.markdown(
-        f"""
-    <div style="color:#9ca3af; font-size:0.95rem; margin-bottom:10px;">
-        {info_line}
-    </div>
-    """,
-        unsafe_allow_html=True
-    )
+        st.markdown(
+            f"""
+        <div style="color:#9ca3af; font-size:0.95rem; margin-bottom:10px;">
+            {info_line}
+        </div>
+        """,
+            unsafe_allow_html=True
+        )
 
     st.markdown(
         f"""
@@ -178,7 +181,9 @@ for i, person in enumerate(cast[:10]):
             profile_url = f"https://image.tmdb.org/t/p/w185{person['profile_path']}"
             st.image(profile_url, width=110)
         else:
-            st.markdown("👤")
+            st.markdown("""<svg xmlns="http://www.w3.org/2000/svg" width="150px" height="170px" fill="skyblue" class="bi bi-person-fill" viewBox="0 0 16 16">
+            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+            </svg>""", unsafe_allow_html=True)
 
         st.caption(person["name"])
 

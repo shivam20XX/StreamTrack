@@ -216,6 +216,7 @@ def get_tv_details(id):
     "last_air_date": data.get("last_air_date"),
     "status": data.get("status"),
     "origin_country": data.get("origin_country"),
+    "seasons": data.get("seasons", []),
     "number_of_seasons": data.get("number_of_seasons"),
     "number_of_episodes": data.get("number_of_episodes"),
     "genres": [g["name"] for g in data.get("genres", [])],
