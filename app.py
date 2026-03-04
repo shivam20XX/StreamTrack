@@ -164,7 +164,7 @@ for i, movie in enumerate(trending_movies[:8]):
             poster_url = f"https://image.tmdb.org/t/p/w500{movie['poster']}"
 
             st.markdown(f"""
-        <a href="?id={movie['id']}&type=tv" target="_self" style="text-decoration:none;">
+        <a href="?id={movie['title']}&type=movie" target="_self" style="text-decoration:none;">
             <div style="position:relative;">
                 <img src="{poster_url}" style="width:100%; border-radius:14px;">
                 <div style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.8); color:#FFD700; padding:4px 8px; border-radius:8px; font-size:13px; font-weight:300;">
