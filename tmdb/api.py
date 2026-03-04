@@ -2,6 +2,7 @@ import requests
 from config import TMDB_KEY
 import streamlit as st
 
+
 BASE_URL = 'https://api.themoviedb.org/3'
 IMAGE_BASE = 'https://image.tmdb.org/t/p'
 
@@ -35,7 +36,7 @@ def get_trending_movies():
 
 
 # ? function to get movie cast details
-@st.cache_data
+@st.cache_data(ttl=3600)
 def get_movie_cast(id):
 
     url = f'{BASE_URL}/movie/{id}/credits'
@@ -59,7 +60,7 @@ def get_movie_cast(id):
 
 
 # * this function get a movies details from tmdb api
-@st.cache_data
+@st.cache_data(ttl=7200)
 def get_movie_details(id):
     url = f'{BASE_URL}/movie/{id}'
     params = {
@@ -141,7 +142,7 @@ def get_movie_details(id):
 
 # ? this function get trending shows list from tmdb api
 
-@st.cache_data
+@st.cache_data(ttl=3600)
 def get_trending_shows():
 
     url = f'{BASE_URL}/trending/tv/week'
@@ -230,7 +231,7 @@ def get_tv_details(id):
     
 
 # ? this function gets TV show cast
-@st.cache_data
+@st.cache_data(ttl=7200)
 def get_tv_cast(id):
     url = f'{BASE_URL}/tv/{id}/credits'
     params = {"api_key": TMDB_KEY}
@@ -341,7 +342,7 @@ def get_upcoming_titles():
 
 
 #? this function gets discover endpoint from tmdbs api
-@st.cache_data(ttl=1800)
+@st.cache_data(ttl=3600)
 def get_discover_titles(media_type="all", sort_by="popularity.desc", page=1):
     params = {
         "api_key": TMDB_KEY,
