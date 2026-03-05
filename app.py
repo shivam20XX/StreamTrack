@@ -1,5 +1,5 @@
 import streamlit as st
-from tmdb.api import get_trending_movies, get_tv_today, get_trending_shows, get_movie_cast, get_movie_details, get_popular_titles, get_upcoming_titles
+from tmdb.api import get_trending_movies,get_tv_season, get_tv_today, get_trending_shows, get_movie_cast, get_movie_details, get_popular_titles, get_upcoming_titles
 import time
 import streamlit.components.v1 as components
 st.markdown("""
@@ -16,7 +16,6 @@ st.set_page_config(
     page_icon="🎬",
     layout="wide",
 )
-
 
 # ------this will check titles their id and their type before going on details page--
 

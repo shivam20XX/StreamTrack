@@ -34,7 +34,6 @@ def get_trending_movies():
     return movies
 
 
-
 # ? function to get movie cast details
 @st.cache_data(ttl=3600)
 def get_movie_cast(id):
@@ -69,19 +68,19 @@ def get_movie_details(id):
     }
     response = requests.get(url, params=params)
     data = response.json()
-    
+
     crew = data.get("credits", {}).get("crew", [])
-    
+
     directors = [c["name"] for c in crew if c.get("job") == "Director"]
 
     writers = [
-    c["name"] for c in crew
-    if c.get("job") in ["Writer", "Screenplay", "Story"]
+        c["name"] for c in crew
+        if c.get("job") in ["Writer", "Screenplay", "Story"]
     ]
 
     producers = [
-    c["name"] for c in crew
-     if c.get("job") in ["Producer", "Executive Producer"]
+        c["name"] for c in crew
+        if c.get("job") in ["Producer", "Executive Producer"]
     ]
 
     # ? logo enpoints
@@ -129,7 +128,7 @@ def get_movie_details(id):
         "runtime": data.get("runtime"),
         "status": data.get("status"),
         "budget": data.get("budget"),
-        "origin_country":data.get("origin_country"),
+        "origin_country": data.get("origin_country"),
         "revenue": data.get("revenue"),
         "genres": [g["name"] for g in data.get("genres", [])],
         "cast": data.get("credits", {}).get("cast", [])[:10],
@@ -141,6 +140,7 @@ def get_movie_details(id):
     }
 
 # ? this function get trending shows list from tmdb api
+
 
 @st.cache_data(ttl=3600)
 def get_trending_shows():
@@ -167,6 +167,7 @@ def get_trending_shows():
 
 # ? this function gets tv details
 
+
 @st.cache_data
 def get_tv_details(id):
     url = f'{BASE_URL}/tv/{id}'
@@ -181,55 +182,55 @@ def get_tv_details(id):
     crew = data.get("credits", {}).get("crew", [])
     creators = [c["name"] for c in data.get("created_by", [])]
     crew = data.get("credits", {}).get("crew", [])
-    
+
     directors = [c["name"] for c in crew if c.get("job") == "Director"]
 
     writers = [
-    c["name"] for c in crew
-    if c.get("job") in ["Writer", "Screenplay", "Story"]
+        c["name"] for c in crew
+        if c.get("job") in ["Writer", "Screenplay", "Story"]
     ]
 
     producers = [
-    c["name"] for c in crew
-    if c.get("job") in ["Producer", "Executive Producer"]
-    ]   
-    
-    
-#-----------------------------------------------------------
-     # ? this Extracts Videos/trailer details from series
+        c["name"] for c in crew
+        if c.get("job") in ["Producer", "Executive Producer"]
+    ]
+
+
+# -----------------------------------------------------------
+    # ? this Extracts Videos/trailer details from series
     videos = data.get("videos", {}).get("results", [])
     trailer_key = None
 
     for video in videos:
-      if video.get("site") == "YouTube" and video.get("type") == "Trailer":
-        trailer_key = video.get("key")
-        break
-#-------------------------------------------------------------
+        if video.get("site") == "YouTube" and video.get("type") == "Trailer":
+            trailer_key = video.get("key")
+            break
+# -------------------------------------------------------------
     return {
-    "id": data["id"],
-    "title": data.get("name"),
-    "overview": data.get("overview", ""),
-    "poster": data.get("poster_path"),
-    "backdrop": data.get("backdrop_path"),
-    "rating": data.get("vote_average"),
-    "release_date": data.get("first_air_date"),
-    "last_air_date": data.get("last_air_date"),
-    "status": data.get("status"),
-    "origin_country": data.get("origin_country"),
-    "seasons": data.get("seasons", []),
-    "number_of_seasons": data.get("number_of_seasons"),
-    "number_of_episodes": data.get("number_of_episodes"),
-    "genres": [g["name"] for g in data.get("genres", [])],
-    "cast": data.get("credits", {}).get("cast", [])[:10],
-    "trailer_key": trailer_key,
+        "id": data["id"],
+        "title": data.get("name"),
+        "overview": data.get("overview", ""),
+        "poster": data.get("poster_path"),
+        "backdrop": data.get("backdrop_path"),
+        "rating": data.get("vote_average"),
+        "release_date": data.get("first_air_date"),
+        "last_air_date": data.get("last_air_date"),
+        "status": data.get("status"),
+        "origin_country": data.get("origin_country"),
+        "seasons": data.get("seasons", []),
+        "number_of_seasons": data.get("number_of_seasons"),
+        "number_of_episodes": data.get("number_of_episodes"),
+        "genres": [g["name"] for g in data.get("genres", [])],
+        "cast": data.get("credits", {}).get("cast", [])[:10],
+        "trailer_key": trailer_key,
 
-    # Crew
-    "creators": creators,
-    "directors": directors,
-    "writers": list(set(writers)),
-    "producers": list(set(producers)),
-}
-    
+        # Crew
+        "creators": creators,
+        "directors": directors,
+        "writers": list(set(writers)),
+        "producers": list(set(producers)),
+    }
+
 
 # ? this function gets TV show cast
 @st.cache_data(ttl=7200)
@@ -283,7 +284,7 @@ def get_popular_titles():
     for show in tv_data:
         tv_list.append({
             "id": show["id"],
-            "title": show.get("name"),  
+            "title": show.get("name"),
             "poster": show.get("poster_path"),
             "rating": show.get("vote_average"),
             "release_date": show.get("first_air_date"),
@@ -297,21 +298,22 @@ def get_popular_titles():
 
     return combined
 
+
 @st.cache_data
 def get_upcoming_titles():
-    upcoming_movie_url=f"{BASE_URL}/movie/upcoming"
-    upcoming_tv_url=f"{BASE_URL}/tv/on_the_air"
-    
+    upcoming_movie_url = f"{BASE_URL}/movie/upcoming"
+    upcoming_tv_url = f"{BASE_URL}/tv/on_the_air"
+
     params = {"api_key": TMDB_KEY}
-    
-     # --- Movies ---
+
+    # --- Movies ---
     upcoming_movie_response = requests.get(upcoming_movie_url, params=params)
     upcoming_movie_data = upcoming_movie_response.json().get("results", [])
 
     # --- TV ---
     upcoming_tv_response = requests.get(upcoming_tv_url, params=params)
     upcoming_tv_data = upcoming_tv_response.json().get("results", [])
-    
+
     movie_list = []
     for movie in upcoming_movie_data:
         movie_list.append({
@@ -328,21 +330,22 @@ def get_upcoming_titles():
     for show in upcoming_tv_data:
         tv_list.append({
             "id": show["id"],
-            "title": show.get("name"),  
+            "title": show.get("name"),
             "poster": show.get("poster_path"),
             "rating": show.get("vote_average"),
             "release_date": show.get("first_air_date"),
             "popularity": show.get("popularity", 0),
             "type": "tv"
         })
-        
+
         combined = movie_list + tv_list
-        combined = sorted(combined, key=lambda x: x["popularity"], reverse=True)
+        combined = sorted(
+            combined, key=lambda x: x["popularity"], reverse=True)
 
     return combined
 
 
-#? this function gets discover endpoint from tmdbs api
+# ? this function gets discover endpoint from tmdbs api
 @st.cache_data(ttl=3600)
 def get_discover_titles(media_type="all", sort_by="popularity.desc", page=1):
     params = {
@@ -382,17 +385,18 @@ def get_discover_titles(media_type="all", sort_by="popularity.desc", page=1):
             })
     return results
 
-##? gets today's airing tv items from tmdb
+# ? gets today's airing tv items from tmdb
+
 @st.cache_data(ttl=7200)
 def get_tv_today():
-    tv_today_url=f"{BASE_URL}/tv/airing_today"
+    tv_today_url = f"{BASE_URL}/tv/airing_today"
     params = {"api_key": TMDB_KEY}
-    
-    tv_today_response=requests.get(tv_today_url,params=params)
-    tv_today_data=tv_today_response.json().get("results",[])
-    
+
+    tv_today_response = requests.get(tv_today_url, params=params)
+    tv_today_data = tv_today_response.json().get("results", [])
+
     tv_today_list = []
-    
+
     for tv_today in tv_today_data:
         tv_today_list.append({
             "id": tv_today["id"],
@@ -402,7 +406,97 @@ def get_tv_today():
             "release_date": tv_today.get("release_date"),
             "popularity": tv_today.get("popularity", 0),
             "type": "tv",
-            "overview":tv_today.get("overview"),
+            "overview": tv_today.get("overview"),
         })
-        
+
     return tv_today_list
+
+# ?-------this will fetch season episodes data from tmdb api
+@st.cache_data(ttl=86400)
+def get_tv_season(series_id, season_number):
+
+    url = f"{BASE_URL}/tv/{series_id}/season/{season_number}"
+    params = {"api_key": TMDB_KEY}
+    response = requests.get(url, params=params)
+    data = response.json()
+
+    # st.write(data)
+
+    # return data.get("episodes", [])
+
+    episodes_data = []  # ? this creates a empty list for episdoes data
+
+    for episodes in data.get("episodes", []):
+        episodes_data.append({
+            "episode_number": episodes.get("episode_number"),
+            "title": episodes.get("name"),
+            "overview": episodes.get("overview"),
+            "runtime": episodes.get("runtime"),
+            "rating": episodes.get("vote_average"),
+            "air_date": episodes.get("air_date"),
+            "still": episodes.get("still_path")
+        })
+    return episodes_data
+
+#?-------this will helps to search data such as movies/shows from tmdb api
+
+    url = f"{BASE_URL}/search/multi"
+
+    params = {"api_key": TMDB_KEY, "query": query}
+    
+    response=requests.get(url,params=params)
+    data=response.json().get("result",[])
+    
+    st.write(data)
+      
+    result=[]
+    
+    for item in data:
+        media_type = item.get("media_type")##? this basically filter the cast details and only shows movies and shows from search
+            
+        if media_type not in ["movie", "tv"]:
+            continue
+        
+        title= item.get("title") or item.get("name") ##? this wil check if search query is movie or series
+
+        result.append({
+        "id":item["id"],
+        "title":title,
+        "poster":item.get("poster_path"),
+        "rating":item.get("vote_average"),
+        "type":item["media_type"]
+         })    
+     
+    return result   
+    
+#? search function to search any titles from tmdb api    
+@st.cache_data(ttl=3600)
+def search_titles(query):
+
+    url = f"{BASE_URL}/search/multi"
+    params = {
+        "api_key": TMDB_KEY,
+        "query": query
+    }
+
+    response = requests.get(url, params=params)
+    data = response.json().get("results", [])
+    results = []
+
+    for item in data:
+        media_type = item.get("media_type")
+
+        if media_type not in ["movie", "tv"]:
+            continue
+
+        title = item.get("title") or item.get("name")
+
+        results.append({
+            "id": item.get("id"),
+            "title": title,
+            "poster": item.get("poster_path"),
+            "rating": item.get("vote_average"),
+            "type": media_type
+        })
+
+    return results

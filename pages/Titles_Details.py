@@ -3,7 +3,8 @@ from tmdb.api import (
     get_movie_details,
     get_tv_details,
     get_movie_cast,
-    get_tv_cast
+    get_tv_cast,
+    get_tv_season,
 )
 
 st.set_page_config(layout="wide")
@@ -90,7 +91,6 @@ episodes = details.get("episodes")
 runtime = details.get("runtime")
 
 # ? --- Layout -----------------------------
-
 col1, col2 = st.columns([1, 2])
 
 with col1:
@@ -141,12 +141,12 @@ with col2:
 
     st.write(details.get("overview", "No overview available"))
 
-# ----- Smaller Starring Section--------------------------------
+#? ----- Smaller Starring Section--------------------------------
 
     names = ", ".join(person["name"] for person in cast[:6])
     st.write("Starring :", names)
 
-# -------------------- Overview of tiles ---------------------------------------------
+#?-------------------- Overview of tiles ---------------------------------------------
     if details.get("creators"):
         st.markdown(
             f"**Creator{'s' if len(details['creators']) > 1 else ''} :** {', '.join(details['creators'])}")
@@ -168,8 +168,38 @@ with col2:
     if details.get("genres"):
         genres = " , ".join(details["genres"])
     st.markdown(f"**Genre :** {genres}")
+    
+#?---------Episodes detail of every season fetches from tmdb api---------- 
+if media_type == "tv":
 
-# --- Cast Section ----------------------------------------------------
+    seasons = details.get("seasons", [])
+    season_numbers = [s["season_number"] for s in seasons if s["season_number"] != 0]
+    
+    selected_season = st.selectbox(
+        "Season",
+        season_numbers
+    )
+
+    episodes = get_tv_season(media_id, selected_season)     
+
+    st.markdown("### Episodes")
+    for ep in episodes:
+      col1, col2 = st.columns([1,4])
+      with col1:
+          if ep["still"]:
+            img = f"https://image.tmdb.org/t/p/w300{ep['still']}"
+            st.image(img)
+
+      with col2:
+        st.markdown(f"**Episode {ep['episode_number']} — {ep['title']}**")
+        st.caption(f"{ep['air_date'][:4]} • ⭐ {ep['rating']} • {ep['runtime']} min")
+        st.write(ep["overview"])
+        st.markdown("<div style='margin-bottom:20px'></div>", unsafe_allow_html=True)
+         
+
+
+
+#? --- Cast Section ----------------------------------------------------
 st.markdown("<div style='margin-top:40px;'></div>", unsafe_allow_html=True)
 st.markdown("### Top Cast")
 
@@ -188,7 +218,7 @@ for i, person in enumerate(cast[:10]):
         st.caption(person["name"])
 
 
-# --- Trailer section ---------
+#? --- Trailer section ---------
 st.markdown("<div style= 'margin-top:80px;'></div>", unsafe_allow_html=True)
 st.markdown("#### Watch Teasers & Trailers")
 if details.get("trailer_key"):
