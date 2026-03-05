@@ -13,7 +13,7 @@ st.markdown("""
 
 st.set_page_config(
     page_title="StreamTrack",
-    page_icon="🎬",
+    page_icon="assets/favicon.ico",
     layout="wide",
 )
 
