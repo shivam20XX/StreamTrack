@@ -382,3 +382,27 @@ def get_discover_titles(media_type="all", sort_by="popularity.desc", page=1):
             })
     return results
 
+##? gets today's airing tv items from tmdb
+@st.cache_data(ttl=7200)
+def get_tv_today():
+    tv_today_url=f"{BASE_URL}/tv/airing_today"
+    params = {"api_key": TMDB_KEY}
+    
+    tv_today_response=requests.get(tv_today_url,params=params)
+    tv_today_data=tv_today_response.json().get("results",[])
+    
+    tv_today_list = []
+    
+    for tv_today in tv_today_data:
+        tv_today_list.append({
+            "id": tv_today["id"],
+            "title": tv_today.get("name"),
+            "poster": tv_today.get("poster_path"),
+            "rating": tv_today.get("vote_average"),
+            "release_date": tv_today.get("release_date"),
+            "popularity": tv_today.get("popularity", 0),
+            "type": "tv",
+            "overview":tv_today.get("overview"),
+        })
+        
+    return tv_today_list

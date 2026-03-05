@@ -1,6 +1,7 @@
 import streamlit as st
-from tmdb.api import get_trending_movies, get_trending_shows, get_movie_cast, get_movie_details, get_popular_titles, get_upcoming_titles
+from tmdb.api import get_trending_movies, get_tv_today, get_trending_shows, get_movie_cast, get_movie_details, get_popular_titles, get_upcoming_titles
 import time
+import streamlit.components.v1 as components
 st.markdown("""
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 """, unsafe_allow_html=True)
@@ -14,7 +15,6 @@ st.set_page_config(
     page_title="StreamTrack",
     page_icon="🎬",
     layout="wide",
-    initial_sidebar_state="collapsed"
 )
 
 
@@ -58,6 +58,8 @@ if movies:
         title_content = f'<div style="margin:0; font-size:3rem; font-weight:bold; color:white;">{details["title"]}</div>'
 
     # ------------------------------ Backdrop image -------------------------------
+    st.markdown("<div style='margin-top:(-40px);'></div>",
+                unsafe_allow_html=True)
     if featured.get('backdrop'):
         backdrop_url = f"https://image.tmdb.org/t/p/w1920{featured['backdrop']}"
 
@@ -66,7 +68,7 @@ if movies:
             <img src="{backdrop_url}" style="width: 100%; height: 100%; object-fit:cover;">
             <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 150px; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);"></div>
             <div style="position: absolute; bottom: 80px; left: 40px;">
-                <div style="margin: 0; text-shadow: 3px 3px 6px rgba(0,0,0,0.9);">{title_content}</div>
+                <div style="margin: 0; text-shadow: 3px 3px 6px rgba(0,0,0,0.8);">{title_content}</div>
             </div>
         </div>
         """
@@ -80,8 +82,6 @@ else:
 # st.button("Add to library") # todo have to make the library functionality
 
 # ---------------------------------------------------------------------------------------------------------
-
-st.markdown("<div style='margin-top:40px;'></div>", unsafe_allow_html=True)
 
 # ? Cast section
 # st.markdown("### 🎭 Cast")
@@ -111,7 +111,7 @@ st.markdown("<div style='margin-top:40px;'></div>", unsafe_allow_html=True)
 #         st.markdown(f"**{person['name']}**")
 #         st.caption(person['character'])
 
-st.markdown("<div style='margin-top:30px;'></div>", unsafe_allow_html=True)
+st.markdown("<div style='margin-top:40px;'></div>", unsafe_allow_html=True)
 st.markdown("""
 <div style="display:flex; align-items:center; gap:10px; font-size:24px; margin-bottom:20px;">
 <span> 
@@ -135,7 +135,7 @@ for i, movie in enumerate(trending_movies[:7]):
             poster_url = f"https://image.tmdb.org/t/p/w500{movie['poster']}"
 
             st.markdown(f"""
-        <a href="?id={movie['id']}&title={movie['title']}&type=movie" target="_self" style="text-decoration:none;">
+        <a href="?id={movie['id']}&type=movie" target="_self" style="text-decoration:none;">
             <div style="position:relative;">
                 <img src="{poster_url}" style="width:100%; border-radius:14px;">
                 <div style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.8); color:#FFD700; padding:4px 8px; border-radius:8px; font-size:13px; font-weight:300;">
@@ -241,14 +241,14 @@ for i, item in enumerate(popular_titles[:7]):
 st.markdown("<div style='margin-top:30px;'></div>", unsafe_allow_html=True)
 
 st.markdown("""
-<div style="display:flex; align-items:center; gap:10px; font-size:20px;">
+<div style="display:flex; align-items:center; gap:10px; font-size:24px; margin-bottom:20px;">
 <span> 
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar2-week" viewBox="0 0 16 16">
   <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M2 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"/>
   <path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5zM11 7.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
 </svg>
 </span>
-<span>Upcoming Movies & Shows</span>
+<span>Upcoming </span>
 </div>
 """, unsafe_allow_html=True)
 
@@ -293,6 +293,82 @@ for i, item in enumerate(visible_items):
 
             st.markdown(f"""
 <a href="?id={item['id']}&type={item['type']}" target="_self" style="text-decoration:none;">
+    <div style="position:relative;">
+        <img src="{poster_url}" style="width:100%; border-radius:14px; margin-bottom:10px;">
+        <div style="
+            position:absolute;
+            top:8px;
+            right:8px;
+            background:rgba(0,0,0,0.75);
+            color:#FFD700;
+            padding:4px 8px;
+            border-radius:8px;
+            font-size:13px;
+            font-weight:600;
+            backdrop-filter: blur(4px);
+        ">
+            ⭐ {item['rating']}
+        </div>
+    </div>
+</a>
+""", unsafe_allow_html=True)
+
+            st.markdown(f"**{item['title']}**")
+
+
+# ? gets today's airing tv details from tmdb
+
+st.markdown("<div style='margin-top:30px;'></div>", unsafe_allow_html=True)
+
+st.markdown("""
+<div style="display:flex; align-items:center; gap:10px; font-size:22px; margin-bottom:20px;">
+<span> 
+<i class="bi bi-tv"></i>
+</span>
+<span> Airing Today </span>
+</div>
+""", unsafe_allow_html=True)
+
+airing_today = get_tv_today()
+
+# ? ----- Carousel State -----
+if "tv_today_index" not in st.session_state:
+    st.session_state.tv_today_index = 0
+
+items_per_page = 7
+total_items = len(airing_today)
+
+# Controls Row
+left_col, mid_col, right_col = st.columns([1, 7, 1])
+
+with left_col:
+    if st.button("<-", key="tv_today_left"):
+        st.session_state.tv_today_index = max(
+            0,
+            st.session_state.tv_today_index - items_per_page
+        )
+
+with right_col:
+    if st.button("->", key="tv_today_right"):
+        if st.session_state.tv_today_index + items_per_page < total_items:
+            st.session_state.tv_today_index += items_per_page
+
+
+# Display Window
+start = st.session_state.tv_today_index
+end = start + items_per_page
+
+visible_items = airing_today[start:end]
+
+cols = st.columns(items_per_page)
+for i, item in enumerate(visible_items):
+    with cols[i]:
+
+        if item["poster"]:
+            poster_url = f"https://image.tmdb.org/t/p/w500{item['poster']}"
+
+            st.markdown(f"""
+<a href="?id={item['id']}&amp;type=tv" target="_self" style="text-decoration:none;">
     <div style="position:relative;">
         <img src="{poster_url}" style="width:100%; border-radius:14px; margin-bottom:10px;">
         <div style="
