@@ -2,7 +2,6 @@ import requests
 from config import TMDB_KEY
 import streamlit as st
 
-
 BASE_URL = 'https://api.themoviedb.org/3'
 IMAGE_BASE = 'https://image.tmdb.org/t/p'
 
@@ -139,9 +138,8 @@ def get_movie_details(id):
         "creators": [],
     }
 
+
 # ? this function get trending shows list from tmdb api
-
-
 @st.cache_data(ttl=3600)
 def get_trending_shows():
 
@@ -166,8 +164,6 @@ def get_trending_shows():
     return shows
 
 # ? this function gets tv details
-
-
 @st.cache_data
 def get_tv_details(id):
     url = f'{BASE_URL}/tv/{id}'
@@ -254,17 +250,17 @@ def get_tv_cast(id):
 
 
 # ? this function gets popular titles form tmdb api
-@st.cache_data
+@st.cache_data(ttl=7200)
 def get_popular_titles():
     popular_tv_url = f"{BASE_URL}/tv/popular"
     popular_movie_url = f"{BASE_URL}/movie/popular"
     params = {"api_key": TMDB_KEY}
 
-    # --- Movies ---
+    #? ----Movies----
     movie_response = requests.get(popular_movie_url, params=params)
     movie_data = movie_response.json().get("results", [])
 
-    # --- TV ---
+    #? -----TV----
     tv_response = requests.get(popular_tv_url, params=params)
     tv_data = tv_response.json().get("results", [])
 
@@ -292,14 +288,14 @@ def get_popular_titles():
             "type": "tv"
         })
 
-    # --- Combine details ---
+    #? --- Combine details ---
     combined = movie_list + tv_list
     combined = sorted(combined, key=lambda x: x["popularity"], reverse=True)
 
     return combined
 
 
-@st.cache_data
+@st.cache_data(ttl=7200)
 def get_upcoming_titles():
     upcoming_movie_url = f"{BASE_URL}/movie/upcoming"
     upcoming_tv_url = f"{BASE_URL}/tv/on_the_air"

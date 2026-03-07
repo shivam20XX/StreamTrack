@@ -6,6 +6,7 @@ from tmdb.api import (
     get_tv_cast,
     get_tv_season,
 )
+from database.db import add_to_library
 
 st.set_page_config(layout="wide")
 
@@ -168,7 +169,24 @@ with col2:
     if details.get("genres"):
         genres = " , ".join(details["genres"])
     st.markdown(f"**Genre :** {genres}")
+ 
+#?--------button to add library section 
     
+    status = st.selectbox(
+    "Add to Library",
+    ["planned", "watching", "completed"]
+)
+
+    if st.button("➕ Save"):
+     add_to_library(
+        media_id,
+        details["title"],
+        media_type,
+        details["poster"],
+        status
+    )
+     st.success(f"Added to {status}")
+   
 #?---------Episodes detail of every season fetches from tmdb api---------- 
 if media_type == "tv":
 

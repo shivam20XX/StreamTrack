@@ -1,21 +1,20 @@
 import streamlit as st
-from tmdb.api import get_trending_movies,get_tv_season, get_tv_today, get_trending_shows, get_movie_cast, get_movie_details, get_popular_titles, get_upcoming_titles
+from tmdb.api import get_trending_movies, get_tv_season, get_tv_today, get_trending_shows, get_movie_cast, get_movie_details, get_popular_titles, get_upcoming_titles
 import time
-import streamlit.components.v1 as components
+from database.db import init_db
 st.markdown("""
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 """, unsafe_allow_html=True)
 # st.cache_data.clear()
 
-st.markdown("""
-
-""", unsafe_allow_html=True)
 
 st.set_page_config(
     page_title="StreamTrack",
-    page_icon="assets/favicon.ico",
+    page_icon="assets/Logo.png",
     layout="wide",
 )
+
+init_db()
 
 # ------this will check titles their id and their type before going on details page--
 
@@ -28,8 +27,6 @@ if "id" in query_params:
     }
     st.switch_page("pages/Titles_Details.py")
 
-
-# -------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------------------------------
 # ? Get trending movies
@@ -57,8 +54,14 @@ if movies:
         title_content = f'<div style="margin:0; font-size:3rem; font-weight:bold; color:white;">{details["title"]}</div>'
 
     # ------------------------------ Backdrop image -------------------------------
-    st.markdown("<div style='margin-top:(-40px);'></div>",
-                unsafe_allow_html=True)
+    st.markdown("""
+    <style>
+        .block-container {
+            padding-top: 0.8rem;
+            padding-bottom: 0rem;
+        }
+    </style>
+    """, unsafe_allow_html=True)
     if featured.get('backdrop'):
         backdrop_url = f"https://image.tmdb.org/t/p/w1920{featured['backdrop']}"
 
@@ -110,7 +113,7 @@ else:
 #         st.markdown(f"**{person['name']}**")
 #         st.caption(person['character'])
 
-st.markdown("<div style='margin-top:40px;'></div>", unsafe_allow_html=True)
+st.markdown("<div style='margin-top:50px;'></div>", unsafe_allow_html=True)
 st.markdown("""
 <div style="display:flex; align-items:center; gap:10px; font-size:24px; margin-bottom:20px;">
 <span> 
@@ -232,8 +235,6 @@ for i, item in enumerate(popular_titles[:7]):
 
             st.markdown(f"**{item['title']}**")
 
-# ? ---------------------- this gets  titles from tmdb --------------------------------------
-
 
 # ? --------------- Upcoming Media ------------------------------------------------------------
 
@@ -261,7 +262,7 @@ if "upcoming_index" not in st.session_state:
 items_per_page = 7
 total_items = len(upcoming_titles)
 
-# Controls Row
+#? Controls Row
 left_col, mid_col, right_col = st.columns([1, 7, 1])
 
 with left_col:
@@ -277,7 +278,7 @@ with right_col:
             st.session_state.upcoming_index += items_per_page
 
 
-# Display Window
+#? Display Window
 start = st.session_state.upcoming_index
 end = start + items_per_page
 
@@ -353,7 +354,7 @@ with right_col:
             st.session_state.tv_today_index += items_per_page
 
 
-# Display Window
+#? Display Window
 start = st.session_state.tv_today_index
 end = start + items_per_page
 
@@ -389,3 +390,4 @@ for i, item in enumerate(visible_items):
 """, unsafe_allow_html=True)
 
             st.markdown(f"**{item['title']}**")
+st.markdown("<div style='margin-top:50px;'></div>", unsafe_allow_html=True)
